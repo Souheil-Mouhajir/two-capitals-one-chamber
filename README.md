@@ -7,7 +7,7 @@
 
 <p align="center">
   Moroccan and Algerian positions in the United Nations, 1962 to 2025<br>
-  <a href="https://souheil-mouhajir.github.io/two-capitals-one-chamber/"><b>Read the working paper</b></a> &middot;
+  <a href="two-capitals-one-chamber.html"><b>Read the working paper</b></a> &middot;
   <a href="data/processed/">Data</a> &middot;
   <a href="#reproducing-the-paper">Reproduce</a>
 </p>
