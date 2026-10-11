@@ -98,23 +98,33 @@ def main():
     page = template.replace("__STYLE__", style).replace("__SCRIPT__", script)
     page = page.replace("__BASE__", BASE_URL)
 
-    hosted = page.replace("__PAYLOAD__", "")
+    inline = '<script id="payload" type="application/json">' + data + "</script>\n"
+    inline = inline + "<script>window.__DATA__ = JSON.parse(document.getElementById('payload').textContent);</script>"
+    standalone = page.replace("__PAYLOAD__", inline)
+
+    # Every copy of the page carries its own payload, so none of them depends on a
+    # second request. data.json stays beside the Pages build as a download.
     with open(os.path.join(common.DOCS, "index.html"), "w") as handle:
-        handle.write(hosted)
+        handle.write(standalone)
     with open(os.path.join(common.DOCS, "data.json"), "w") as handle:
         handle.write(data)
     with open(os.path.join(common.DOCS, ".nojekyll"), "w") as handle:
         handle.write("")
-
-    inline = '<script id="payload" type="application/json">' + data + "</script>\n"
-    inline = inline + "<script>window.__DATA__ = JSON.parse(document.getElementById('payload').textContent);</script>"
-    standalone = page.replace("__PAYLOAD__", inline)
     with open(os.path.join(common.DIST, "two-capitals-one-chamber.html"), "w") as handle:
         handle.write(standalone)
 
-    print("docs/index.html", len(hosted), "bytes")
+    # The same single file sits at the repository root, so a Pages site served
+    # from the branch root opens the paper rather than a directory listing, and
+    # the file also opens from disk with no server.
+    with open(os.path.join(common.ROOT, "index.html"), "w") as handle:
+        handle.write(standalone)
+    with open(os.path.join(common.ROOT, ".nojekyll"), "w") as handle:
+        handle.write("")
+
+    print("docs/index.html", len(standalone), "bytes")
     print("docs/data.json", len(data), "bytes")
     print("dist standalone", len(standalone), "bytes")
+    print("index.html at the repository root", len(standalone), "bytes")
 
 
 if __name__ == "__main__":

@@ -7,13 +7,12 @@
 
 <p align="center">
   Moroccan and Algerian positions in the United Nations, 1962 to 2025<br>
-  <a href="two-capitals-one-chamber.html"><b>Read the working paper</b></a> &middot;
+  <a href="https://souheil-mouhajir.github.io/two-capitals-one-chamber/"><b>Read the working paper</b></a> &middot;
   <a href="data/processed/">Data</a> &middot;
   <a href="#reproducing-the-paper">Reproduce</a>
 </p>
 
 <p align="center">
-  <img alt="build" src="https://github.com/souheil-mouhajir/two-capitals-one-chamber/actions/workflows/check.yml/badge.svg">
   <img alt="code licence" src="https://img.shields.io/badge/code-MIT-black">
   <img alt="data licence" src="https://img.shields.io/badge/data-CC%20BY%204.0-black">
   <img alt="roll calls" src="https://img.shields.io/badge/roll%20calls-5%2C086-c4123f">
@@ -74,6 +73,30 @@ The chamber beeswarm keeps one node per state and tweens positions between years
 The three layers end in different years, and the page says so on the first screen. Sessions
 75 to 79 of the roll call file sit in the Dataverse release, which this build does not fetch.
 
+## Continuous integration
+
+The workflow in `.github/workflows/check.yml` runs both suites on every push and deploys
+`docs/` to Pages. Once it has run green once on `main`, this line restores the status badge
+at the top of the file:
+
+```markdown
+<img alt="build" src="https://github.com/souheil-mouhajir/two-capitals-one-chamber/actions/workflows/check.yml/badge.svg">
+```
+
+The badge endpoint does not exist before the first run, which is why it is not there yet.
+
+## Publishing
+
+Every copy of the paper carries its own payload, so none of them depends on a second
+request and all of them open from disk with no server. `index.html` at the root serves a
+Pages site configured on the branch root, `docs/index.html` serves one configured on the
+docs folder and is what the included workflow deploys, and `dist/` holds the same file under
+a descriptive name for sending by hand. `data.json` sits beside the docs build as a
+download, not as a dependency.
+
+In Settings, Pages, either option now resolves to the paper: "Deploy from a branch" with
+`main` and `/ (root)`, "Deploy from a branch" with `main` and `/docs`, or "GitHub Actions".
+
 ## Reproducing the paper
 
 ```bash
@@ -89,7 +112,7 @@ are seeded at 20260901, so the intervals come back identical.
 
 | Stage | Command | Writes |
 | --- | --- | --- |
-| Fetch | `make data/raw` | `data/raw/` (420 MB, never committed) |
+| Fetch | `make fetch` | `data/raw/` (420 MB, never committed) |
 | Roll calls | `python3 src/build_votes.py` | agreement cells, splits, Sahara tables, barcode |
 | Positions | `python3 src/build_positions.py` | scaling, periods, gaps, chamber |
 | Speeches | `python3 src/build_speech.py` | term counts, TF-IDF similarity |

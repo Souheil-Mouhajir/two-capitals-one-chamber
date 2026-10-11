@@ -49,7 +49,7 @@
     --line:#2a3238;
     --hair:#222a30;
     --sheet:#141a1e;
-    --field:#0c1013;
+    --field:#10161a;
     --ma:#f0486d;
     --dz:#36b394;
     --steel:#7e8c96;
@@ -65,7 +65,7 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:var(--field);color:var(--body);font-family:var(--sans);
   font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 main{max-width:880px;margin:0 auto;background:var(--sheet);border-left:1px solid var(--line);
-  border-right:1px solid var(--line);padding:0 64px 104px}
+  border-right:1px solid var(--line);padding:0 64px 104px;overflow-x:clip}
 header{padding:64px 0 30px;border-bottom:1px solid var(--ink)}
 .kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--mute);
   margin:0 0 22px;text-transform:uppercase}
@@ -762,7 +762,7 @@ function drawCoverage() {
   const height = 96;
   const first = 1962;
   const last = 2026;
-  const xScale = function (year) { return 150 + (year - first) / (last - first) * (width - 160); };
+  const xScale = function (year) { return 150 + (year - first) / (last - first) * 300; };
   const chart = canvas(width, height);
   for (const year of [1962, 1980, 2000, 2020]) {
     chart.appendChild(el("line", { x1: xScale(year), x2: xScale(year), y1: 6, y2: 78, stroke: C.line }));
@@ -777,7 +777,7 @@ function drawCoverage() {
     const group = el("g", { transform: "translate(0 " + (16 + index * 22) + ")" });
     group.appendChild(el("text", { x: 0, y: 4, class: "lab", fill: C.mute }, row[0]));
     group.appendChild(el("rect", { x: xScale(row[1]), y: -4, width: Math.max(2, xScale(row[2]) - xScale(row[1])), height: 8, fill: row[3], opacity: 0.85 }));
-    group.appendChild(el("text", { x: xScale(row[2]) + 6, y: 4, class: "tick" }, row[1] + "–" + row[2] + ", " + row[4]));
+    group.appendChild(el("text", { x: xScale(last) + 14, y: 4, class: "tick" }, row[1] + "–" + row[2] + ", " + row[4]));
     chart.appendChild(group);
   });
   $("#coverage").replaceChildren(chart);

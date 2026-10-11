@@ -1,0 +1,68 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile the pipeline
+        run: python -m compileall -q src
+
+      - name: Test the published numbers
+        run: python src/test_data.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install jsdom
+        run: npm install --no-save jsdom
+
+      - name: Test the page
+        run: node src/check_site.js
+
+      - name: Confirm the page and the payload agree
+        run: |
+          test -s docs/index.html
+          test -s docs/data.json
+          test -s dist/two-capitals-one-chamber.html
+          python - <<'PY'
+          import json
+          payload = json.load(open("docs/data.json"))
+          standalone = open("dist/two-capitals-one-chamber.html").read()
+          assert json.dumps(payload, separators=(",", ":")) in standalone
+          print("payload matches the standalone build")
+          PY
+
+  pages:
+    needs: integrity
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4

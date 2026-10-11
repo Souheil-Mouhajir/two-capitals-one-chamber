@@ -1,0 +1,7 @@
+data/raw/
+build/
+assets/fonts/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/

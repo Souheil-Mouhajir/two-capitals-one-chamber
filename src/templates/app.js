@@ -356,7 +356,7 @@ function drawCoverage() {
   const height = 96;
   const first = 1962;
   const last = 2026;
-  const xScale = function (year) { return 150 + (year - first) / (last - first) * (width - 160); };
+  const xScale = function (year) { return 150 + (year - first) / (last - first) * 300; };
   const chart = canvas(width, height);
   for (const year of [1962, 1980, 2000, 2020]) {
     chart.appendChild(el("line", { x1: xScale(year), x2: xScale(year), y1: 6, y2: 78, stroke: C.line }));
@@ -371,7 +371,7 @@ function drawCoverage() {
     const group = el("g", { transform: "translate(0 " + (16 + index * 22) + ")" });
     group.appendChild(el("text", { x: 0, y: 4, class: "lab", fill: C.mute }, row[0]));
     group.appendChild(el("rect", { x: xScale(row[1]), y: -4, width: Math.max(2, xScale(row[2]) - xScale(row[1])), height: 8, fill: row[3], opacity: 0.85 }));
-    group.appendChild(el("text", { x: xScale(row[2]) + 6, y: 4, class: "tick" }, row[1] + "–" + row[2] + ", " + row[4]));
+    group.appendChild(el("text", { x: xScale(last) + 14, y: 4, class: "tick" }, row[1] + "–" + row[2] + ", " + row[4]));
     chart.appendChild(group);
   });
   $("#coverage").replaceChildren(chart);
